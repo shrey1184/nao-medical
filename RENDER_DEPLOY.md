@@ -2,21 +2,20 @@
 
 Your frontend is already live at: **https://vite-project-pearl-zeta.vercel.app**
 
-## Step 1: Create PostgreSQL Database on Render
+## Step 1: ✅ Database Already Set Up (Supabase)
 
-1. Go to https://render.com and sign in
-2. Click **New +** → **PostgreSQL**
-3. Configure:
-   - **Name:** `nao-medical-db`
-   - **Database:** `nao_medical`
-   - **User:** `nao_medical_user`
-   - **Region:** Oregon (or closest to you)
-   - **Plan:** Free
-4. Click **Create Database**
-5. Wait 2-3 minutes for database to initialize
-6. **Copy the Internal Database URL** (starts with `postgresql://`)
-   - Found under "Connections" section
-   - Format: `postgresql://user:password@host/database`
+Your Supabase PostgreSQL database is ready to use!
+
+**Your Connection String:**
+```
+postgresql://postgres:[YOUR-PASSWORD]@db.wuycutriievqnhuikbdm.supabase.co:5432/postgres
+```
+
+⚠️ **Important:** Replace `[YOUR-PASSWORD]` with your actual Supabase database password.
+
+📍 **Find your password:**
+- Supabase Dashboard → Settings → Database → Database Password
+- If you forgot it, you can reset it in the same location
 
 ---
 
@@ -63,10 +62,12 @@ git push origin main
    
    | Key | Value |
    |-----|-------|
-   | `DATABASE_URL` | [Your Internal Database URL from Step 1] |
+   | `DATABASE_URL` | `postgresql://postgres:[YOUR-PASSWORD]@db.wuycutriievqnhuikbdm.supabase.co:5432/postgres` |
    | `GEMINI_API_KEY` | [Your Google Gemini API Key] |
    | `CORS_ORIGINS` | `https://vite-project-pearl-zeta.vercel.app` |
    | `PYTHON_VERSION` | `3.11.0` |
+   
+   ⚠️ Remember to replace `[YOUR-PASSWORD]` with your actual Supabase password!
 
 8. **Select Plan:** Free
 
