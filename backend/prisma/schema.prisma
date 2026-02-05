@@ -1,0 +1,64 @@
+// Prisma Schema for Healthcare Translation App
+// Trade-off: Using simple schema for MVP, can extend with more fields later
+
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User represents doctors and patients with unique IDs
+model User {
+  id                    String         @id @default(uuid())
+  name                  String
+  role                  String         // "doctor" or "patient"
+  uniqueId              String         @unique // Human-readable unique ID (e.g., "DOC001", "PAT123")
+  language              String         // Default language preference
+  createdAt             DateTime       @default(now())
+  doctorConversations   Conversation[] @relation("DoctorConversations")
+  patientConversations  Conversation[] @relation("PatientConversations")
+
+  @@index([role])
+  @@index([uniqueId])
+}
+
+// Conversation represents a session between doctor and patient
+model Conversation {
+  id              String    @id @default(uuid())
+  doctorId        String
+  patientId       String
+  doctor          User      @relation("DoctorConversations", fields: [doctorId], references: [id], onDelete: Cascade)
+  patient         User      @relation("PatientConversations", fields: [patientId], references: [id], onDelete: Cascade)
+  doctorLanguage  String    // e.g., "en", "es", "fr"
+  patientLanguage String    // e.g., "zh", "hi", "ar"
+  summary         String?   // AI-generated summary, nullable until generated
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  messages        Message[]
+
+  @@index([createdAt])
+  @@index([doctorId])
+  @@index([patientId])
+}
+
+// Message stores each chat message with original and translated text
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String       // "doctor" or "patient"
+  originalText   String       // Original message in sender's language
+  translatedText String       // Translated message for recipient
+  sourceLanguage String       // Language of original text
+  targetLanguage String       // Language of translation
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+  @@index([originalText])  // For keyword search - trade-off: simple index vs full-text search
+  @@index([translatedText])
+}
